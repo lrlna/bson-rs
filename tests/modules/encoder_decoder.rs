@@ -329,6 +329,40 @@ fn test_encode_decode_decimal128() {
     assert_eq!(decoded, doc);
 }
 
+/* General TODO:
+ *     1. open json test file
+ *     2. read file into json, and for each test:
+ *          a. read the "canonical_extjson" field as JSON into extjson_doc
+ *          b. find "$decimal128" field within extjson_doc (no matter how nested) and return value
+ *              (which is always going to be a string) as extjson_str
+ *          c. decode document from "canonical_bson" field as decoded (lines 352-353)
+ *          c. find the to_string method of the Decimal128 type, call it on decoded and store
+ *             result as decoded_str
+ *          d. compare decoded_str and extjson_str: if the same, then test passes
+ */
+#[test]
+fn test_encode_decode_decimal128_corpus() {
+
+    // These three values are eventually going to come from the test JSON
+    let canonical_bson = "18000000136400FFFFFFFF638E8D37C087ADBE09ED010000";
+    let canonical_extjson = "{\"d\" : {\"$numberDecimal\" : \"9.999999999999999999999999999999999E-6143\"}}";
+    let extjson_str = "9.999999999999999999999999999999999E-6143";
+
+    // Decode and build document
+    let bson_bytes = hex::decode(canonical_bson).unwrap();
+    let decoded = decode_document(&mut Cursor::new(bson_bytes)).unwrap();
+
+    let decoded_str = ""; // TODO: decoded_str.as_string(), i.e. find this method!
+
+    /* decoded_str should equal "9.999999999999999999999999999999999E-6143" and NOT
+     * "Decimal128(9.999999999999999999999999999999999E-6143)". So we'd call
+     * decoded.get("d").unwrap().<the to-string method defined in the scope>(); */
+    assert_eq!(extjson_str, decoded_str);
+
+//    println!("{}", decoded.to_string());
+
+}
+
 #[test]
 fn test_illegal_size() {
     let buffer = [0x06, 0xcc, 0xf9, 0x0a, 0x05, 0x00, 0x00, 0x03, 0x00, 0xff, 0xff];
