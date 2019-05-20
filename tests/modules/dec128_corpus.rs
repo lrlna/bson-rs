@@ -70,11 +70,6 @@ fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
 
 #[test]
 fn test_encode_decode_decimal128_corpus() { // TODO: get rid of all the unwraps()
-
-    // These three values are eventually going to come from the test JSON
-    let canonical_bson = "180000001364000000000000000000000000000000007C00";
-    let canonical_extjson = "{\"d\" : {\"$numberDecimal\" : \"NaN\"}}";
-
     let path = env::current_dir().unwrap().join(Path::new("tests/modules/corpus")); // TODO: need to join everything?
 
     let test_files = fs::read_dir(path).unwrap();
