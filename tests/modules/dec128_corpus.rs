@@ -1,7 +1,5 @@
 extern crate serde_derive;
-//extern crate serde_json;
 use self::serde_derive::Deserialize;
-//use self::serde_json::Value;
 
 use bson::{decode_document, Bson};
 use bson::decimal128::Decimal128;
@@ -49,12 +47,9 @@ struct Decimal128ExtJSON {
 }
 
 fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
-    println!("\tDESCRIPTION {}", description);
-
     // Extract string value from extended JSON
     let d128: Decimal128ExtJSON = serde_json::from_str(canonical_extjson).unwrap();
     let extjson_str = d128.d.decimal128;
-    println!("\t\tEXPECTED STRING {}", extjson_str);
 
     // Decode and build document
     let bson_bytes = hex::decode(canonical_bson).unwrap();
@@ -63,8 +58,11 @@ fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
     let decoded_str = decoded.get("d").unwrap();
     match decoded_str {
         Bson::Decimal128(val) => {
-            println!("\t\tACTUAL STRING: {}", val.to_string());
-//            assert_eq!(extjson_str, val.to_string());
+            if extjson_str != val.to_string() {
+                println!("\tFAIL: expected '{}' but got '{}' for test '{}'", extjson_str, val.to_string(), description);
+            } else {
+                println!("\tPASS: expected '{}' for test '{}'", val.to_string(), description);
+            }
         }
         _ => unimplemented!(),
     }
@@ -82,7 +80,7 @@ fn test_encode_decode_decimal128_corpus() { // TODO: get rid of all the unwraps(
     let test_files = fs::read_dir(path).unwrap();
     for fp in test_files {
         let file_path = fp.unwrap().path();
-        println!("FILE: {}", file_path.display());
+        println!("TEST_FILE: {}", file_path.display());
         let file = File::open(file_path).unwrap();
         let reader = BufReader::new(file);
         let tests: TestFile = serde_json::from_reader(reader).unwrap();
