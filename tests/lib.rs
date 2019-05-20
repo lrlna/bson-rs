@@ -6,5 +6,6 @@ extern crate byteorder;
 extern crate chrono;
 extern crate hex;
 extern crate decimal;
+extern crate serde_json;
 
 mod modules;
