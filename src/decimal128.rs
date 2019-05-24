@@ -3,12 +3,18 @@
 use std::fmt;
 use std::str::FromStr;
 
+#[cfg(target_arch = "wasm32")]
+use dec128;
+#[cfg(not(target_arch = "wasm32"))]
 use decimal::d128;
 
 /// Decimal128 type
 #[derive(Clone, PartialEq, PartialOrd)]
 pub struct Decimal128 {
+    #[cfg(not(target_arch = "wasm32"))]
     inner: d128,
+    #[cfg(target_arch = "wasm32")]
+    inner: dec128::Decimal128,
 }
 
 impl Decimal128 {
@@ -25,8 +31,16 @@ impl Decimal128 {
     ///
     /// let dec128 = Decimal128::from_str("1.05E+3");
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn from_str(s: &str) -> Decimal128 {
-        Decimal128 { inner: s.parse::<d128>().expect("Invalid Decimal128 string"), }
+        Decimal128 {
+            inner: s.parse::<d128>().expect("Invalid Decimal128 string"),
+        }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn from_str(s: &str) -> Decimal128 {
+        unimplemented!();
     }
 
     /// Construct a `Decimal128` from a `i32` number.
@@ -37,8 +51,14 @@ impl Decimal128 {
     /// let num: i32 = 23;
     /// let dec128 = Decimal128::from_i32(num);
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn from_i32(d: i32) -> Decimal128 {
         Decimal128 { inner: From::from(d) }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn from_i32(d: i32) -> Decimal128 {
+        unimplemented!();
     }
 
     /// Construct a `Decimal128` from a `u32` number.
@@ -49,8 +69,14 @@ impl Decimal128 {
     /// let num: u32 = 78;
     /// let dec128 = Decimal128::from_u32(num);
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn from_u32(d: u32) -> Decimal128 {
         Decimal128 { inner: From::from(d) }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn from_u32(d: u32) -> Decimal128 {
+        unimplemented!();
     }
 
     /// Construct a `Decimal128` from a `i32` number.
@@ -63,8 +89,14 @@ impl Decimal128 {
     /// let int = dec128.into_i32();
     /// assert_eq!(int, num);
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn into_i32(&self) -> i32 {
         Into::into(self.inner)
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn into_i32(d: u32) -> i32 {
+        unimplemented!();
     }
 
     /// Construct a `Decimal128` from a `i32` number.
@@ -77,8 +109,14 @@ impl Decimal128 {
     /// let int = dec128.into_u32();
     /// assert_eq!(int, num);
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn into_u32(&self) -> u32 {
         Into::into(self.inner)
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn into_u32(d: u32) -> u32 {
+        unimplemented!();
     }
 
     /// Create a new Decimal128 as `0`.
@@ -88,26 +126,51 @@ impl Decimal128 {
     ///
     /// let dec128 = Decimal128::zero();
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn zero() -> Decimal128 {
         Decimal128 { inner: d128::zero() }
     }
 
+    #[cfg(target_arch = "wasm32")]
+    pub fn zero() -> Decimal128 {
+        unimplemented!();
+    }
+
     #[doc(hidden)]
+    #[cfg(not(target_arch = "wasm32"))]
     pub unsafe fn from_raw_bytes_le(mut raw: [u8; 16]) -> Decimal128 {
         if cfg!(target_endian = "big") {
             raw.reverse();
         }
 
-        Decimal128 { inner: d128::from_raw_bytes(raw), }
+        Decimal128 {
+            inner: d128::from_raw_bytes(raw),
+        }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub unsafe fn from_raw_bytes_le(mut raw: [u8; 16]) -> Decimal128 {
+        if cfg!(target_endian = "big") {
+            raw.reverse();
+        }
+        Decimal128 {
+            inner: dec128::Decimal128::from_raw_buf(raw),
+        }
     }
 
     #[doc(hidden)]
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn to_raw_bytes_le(&self) -> [u8; 16] {
         let mut buf = self.inner.to_raw_bytes();
         if cfg!(target_endian = "big") {
             buf.reverse();
         }
         buf
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn to_raw_bytes_le(&self) -> [u8; 16] {
+        unimplemented!();
     }
 
     /// Check if value is `NaN`
@@ -132,8 +195,14 @@ impl Decimal128 {
     /// let dec128 = Decimal128::from_u32(num);
     /// assert!(dec128.is_zero());
     /// ```
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn is_zero(&self) -> bool {
         self.inner.is_zero()
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn is_zero(&self) -> bool {
+        unimplemented!();
     }
 }
 
@@ -150,14 +219,26 @@ impl fmt::Display for Decimal128 {
 }
 
 impl fmt::LowerHex for Decimal128 {
+    #[cfg(not(target_arch = "wasm32"))]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         <d128 as fmt::LowerHex>::fmt(&self.inner, f)
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        <dec128::Decimal128 as fmt::LowerHex>::fmt(&self.inner, f)
     }
 }
 
 impl fmt::LowerExp for Decimal128 {
+    #[cfg(not(target_arch = "wasm32"))]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         <d128 as fmt::LowerExp>::fmt(&self.inner, f)
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        <dec128::Decimal128 as fmt::LowerExp>::fmt(&self.inner, f)
     }
 }
 
@@ -168,18 +249,35 @@ impl FromStr for Decimal128 {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl Into<d128> for Decimal128 {
     fn into(self) -> d128 {
         self.inner
     }
 }
 
+#[cfg(target_arch = "wasm32")]
+impl Into<dec128::Decimal128> for Decimal128 {
+    fn into(self) -> dec128::Decimal128 {
+        self.inner
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 impl From<d128> for Decimal128 {
     fn from(d: d128) -> Decimal128 {
         Decimal128 { inner: d }
     }
 }
 
+#[cfg(target_arch = "wasm32")]
+impl From<dec128::Decimal128> for Decimal128 {
+    fn from(d: dec128::Decimal128) -> Decimal128 {
+        Decimal128 { inner: d }
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 impl Default for Decimal128 {
     fn default() -> Decimal128 {
         Decimal128::zero()

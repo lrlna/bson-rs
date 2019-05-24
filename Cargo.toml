@@ -21,7 +21,7 @@ u2i = []
 name = "bson"
 
 [dependencies]
-byteorder = "1"
+byteorder = "1.2.1"
 chrono = "0.4"
 libc = "0.2"
 rand = "0.5"
@@ -32,6 +32,9 @@ linked-hash-map = "0.5"
 hex = "0.3"
 md5 = "0.3"
 try_from = "0.2"
+decimal128 = { path = "../decimal128" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 decimal = "2.0.4"
 
 [dev-dependencies]

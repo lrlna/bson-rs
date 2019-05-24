@@ -58,6 +58,7 @@ fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
     let decoded_str = decoded.get("d").unwrap();
     match decoded_str {
         Bson::Decimal128(val) => {
+            // assert_eq!(extjson_str, val.to_string());
             if extjson_str != val.to_string() {
                 println!("\tFAIL: expected '{}' but got '{}' for test '{}'", extjson_str, val.to_string(), description);
             } else {
