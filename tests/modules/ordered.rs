@@ -87,7 +87,10 @@ fn test_getters() {
     assert_eq!(Some(&Bson::UtcDatetime(datetime.clone())), doc.get("datetime"));
     assert_eq!(Ok(&datetime), doc.get_utc_datetime("datetime"));
 
-    let dec = Decimal128::from_str("968E+1");
+    let vec: [u8; 16] = [
+        0x30, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0xd2,
+    ];
+    let dec = Decimal128::from_raw_bytes_le(vec);
     doc.insert("decimal128".to_string(), Bson::Decimal128(dec.clone()));
     assert_eq!(Some(&Bson::Decimal128(dec.clone())), doc.get("decimal128"));
     assert_eq!(Ok(&dec), doc.get_decimal128("decimal128"));
@@ -100,8 +103,10 @@ fn test_getters() {
     assert_eq!(Some(&Bson::ObjectId(object_id.clone())), doc.get("_id"));
     assert_eq!(Ok(&object_id), doc.get_object_id("_id"));
 
-    assert_eq!(Some(&Bson::Binary(BinarySubtype::Generic, binary.clone())),
-               doc.get("binary"));
+    assert_eq!(
+        Some(&Bson::Binary(BinarySubtype::Generic, binary.clone())),
+        doc.get("binary")
+    );
     assert_eq!(Ok(&binary), doc.get_binary_generic("binary"));
 }
 
@@ -145,11 +150,13 @@ fn entry() {
         assert_eq!(v, &mut Bson::Null);
     }
 
-    assert_eq!(doc,
-               doc! {
-                   "first": 1i32,
-                   "second": "foo",
-                   "alphanumeric": "bar",
-                   "fourth": Bson::Null,
-               },);
+    assert_eq!(
+        doc,
+        doc! {
+            "first": 1i32,
+            "second": "foo",
+            "alphanumeric": "bar",
+            "fourth": Bson::Null,
+        },
+    );
 }

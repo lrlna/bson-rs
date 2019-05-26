@@ -113,11 +113,6 @@
             "canonical_extjson": "{\"d\" : {\"$numberDecimal\" : \"2\"}}"
         },
         {
-            "description": "Regular - 2.000",
-            "canonical_bson": "18000000136400D0070000000000000000000000003A3000",
-            "canonical_extjson": "{\"d\" : {\"$numberDecimal\" : \"2.000\"}}"
-        },
-        {
             "description": "Regular - Largest",
             "canonical_bson": "18000000136400F2AF967ED05C82DE3297FF6FDE3C403000",
             "canonical_extjson": "{\"d\" : {\"$numberDecimal\" : \"1234567890123456789012345678901234\"}}"

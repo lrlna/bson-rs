@@ -149,7 +149,7 @@ impl Decimal128 {
     // }
 
     // #[cfg(target_arch = "wasm32")]
-    pub unsafe fn from_raw_bytes_le(mut raw: [u8; 16]) -> Decimal128 {
+    pub fn from_raw_bytes_le(mut raw: [u8; 16]) -> Decimal128 {
         // if cfg!(target_endian = "big") {
         //     raw.reverse();
         // }

@@ -57,7 +57,10 @@ fn int32() {
 
 #[test]
 fn dec128() {
-    let d128 = Decimal128::from_str("1.05E+3");
+    let vec: [u8; 16] = [
+        0x30, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0xd2,
+    ];
+    let d128 = Decimal128::from_raw_bytes_le(vec);
     let obj = Bson::Decimal128(d128.clone());
     let ser: Decimal128 = from_bson(obj.clone()).unwrap();
     assert_eq!(ser, d128);
