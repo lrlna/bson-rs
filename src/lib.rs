@@ -50,9 +50,9 @@ extern crate rand;
 extern crate serde;
 #[macro_use]
 extern crate serde_json;
-#[cfg(not(target_arch = "wasm32"))]
-extern crate decimal;
-#[cfg(target_arch = "wasm32")]
+// #[cfg(not(target_arch = "wasm32"))]
+// extern crate decimal;
+// #[cfg(target_arch = "wasm32")]
 extern crate decimal128 as dec128;
 extern crate md5;
 extern crate time;

@@ -1,13 +1,12 @@
 extern crate serde_derive;
 use self::serde_derive::Deserialize;
 
-use bson::{decode_document, Bson};
 use bson::decimal128::Decimal128;
-use std::io::{Cursor, BufReader};
+use bson::{decode_document, Bson};
 use std::env;
 use std::fs::{self, File};
+use std::io::{BufReader, Cursor};
 use std::path::Path;
-
 
 /* General TODO:
  *     1. open json test file
@@ -25,25 +24,25 @@ struct Test {
     description: String,
     canonical_bson: String,
     canonical_extjson: String,
-    lossy: Option<bool>
+    lossy: Option<bool>,
 }
 #[derive(Deserialize, Debug)]
 struct TestFile {
     description: String,
     bson_type: String,
     test_key: String,
-    valid: Vec<Test>
+    valid: Vec<Test>,
 }
 
 #[derive(Deserialize, Debug)]
 struct D128 {
-    #[serde(rename="$numberDecimal")]
-    decimal128: String
+    #[serde(rename = "$numberDecimal")]
+    decimal128: String,
 }
 
 #[derive(Deserialize, Debug)]
 struct Decimal128ExtJSON {
-    d: D128
+    d: D128,
 }
 
 fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
@@ -60,7 +59,12 @@ fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
         Bson::Decimal128(val) => {
             // assert_eq!(extjson_str, val.to_string());
             if extjson_str != val.to_string() {
-                println!("\tFAIL: expected '{}' but got '{}' for test '{}'", extjson_str, val.to_string(), description);
+                println!(
+                    "\tFAIL: expected '{}' but got '{}' for test '{}'",
+                    extjson_str,
+                    val.to_string(),
+                    description
+                );
             } else {
                 println!("\tPASS: expected '{}' for test '{}'", val.to_string(), description);
             }
@@ -70,7 +74,8 @@ fn run_test(description: &str, canonical_bson: &str, canonical_extjson: &str) {
 }
 
 #[test]
-fn test_encode_decode_decimal128_corpus() { // TODO: get rid of all the unwraps()
+fn test_encode_decode_decimal128_corpus() {
+    // TODO: get rid of all the unwraps()
     let path = env::current_dir().unwrap().join(Path::new("tests/modules/corpus")); // TODO: need to join everything?
 
     let test_files = fs::read_dir(path).unwrap();
@@ -83,9 +88,5 @@ fn test_encode_decode_decimal128_corpus() { // TODO: get rid of all the unwraps(
         for test in tests.valid {
             run_test(&test.description, &test.canonical_bson, &test.canonical_extjson);
         }
-
     }
-
 }
-
-

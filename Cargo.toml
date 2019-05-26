@@ -32,12 +32,15 @@ linked-hash-map = "0.5"
 hex = "0.3"
 md5 = "0.3"
 try_from = "0.2"
+
+# [target.'cfg(target_arch = "wasm32")'.dependencies]
 decimal128 = { path = "../decimal128" }
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-decimal = "2.0.4"
+# [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# decimal = "2.0.4"
 
 [dev-dependencies]
+wasm-bindgen-test = "0.2.45"
 assert_matches = "1.2"
 serde_derive = "1.0"
 serde_bytes = "0.10"

@@ -4,8 +4,11 @@ extern crate assert_matches;
 extern crate bson;
 extern crate byteorder;
 extern crate chrono;
+// #[cfg(not(target_arch = "wasm32"))]
+// extern crate decimal;
+// #[cfg(target_arch = "wasm32")]
+extern crate decimal128 as dec128;
 extern crate hex;
-extern crate decimal;
 extern crate serde_json;
 
 mod modules;
