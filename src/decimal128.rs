@@ -39,7 +39,7 @@ impl Decimal128 {
     // }
 
     // #[cfg(target_arch = "wasm32")]
-    pub fn from_str(s: &str) -> Decimal128 {
+    pub fn from_str(_s: &str) -> Decimal128 {
         unimplemented!();
     }
 
@@ -57,7 +57,7 @@ impl Decimal128 {
     // }
 
     // #[cfg(target_arch = "wasm32")]
-    pub fn from_i32(d: i32) -> Decimal128 {
+    pub fn from_i32(_d: i32) -> Decimal128 {
         unimplemented!();
     }
 
@@ -75,7 +75,7 @@ impl Decimal128 {
     // }
 
     // #[cfg(target_arch = "wasm32")]
-    pub fn from_u32(d: u32) -> Decimal128 {
+    pub fn from_u32(_d: u32) -> Decimal128 {
         unimplemented!();
     }
 

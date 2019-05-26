@@ -48,7 +48,10 @@ fn read_string<R: Read + ?Sized>(reader: &mut R, utf8_lossy: bool) -> DecoderRes
 
     // UTF-8 String must have at least 1 byte (the last 0x00).
     if len < 1 {
-        return Err(DecoderError::InvalidLength(len as usize, format!("invalid length {} for UTF-8 string", len)));
+        return Err(DecoderError::InvalidLength(
+            len as usize,
+            format!("invalid length {} for UTF-8 string", len),
+        ));
     }
 
     let s = if utf8_lossy {
@@ -92,8 +95,8 @@ fn read_i64<R: Read + ?Sized>(reader: &mut R) -> DecoderResult<i64> {
 #[inline]
 fn read_f128<R: Read + ?Sized>(reader: &mut R) -> DecoderResult<Decimal128> {
     let mut local_buf: [u8; 16] = unsafe { mem::uninitialized() };
-    try!(reader.read_exact(&mut local_buf));
-    let val = unsafe { Decimal128::from_raw_bytes_le(local_buf) };
+    reader.read_exact(&mut local_buf)?;
+    let val = Decimal128::from_raw_bytes_le(local_buf);
     Ok(val)
 }
 
@@ -183,7 +186,10 @@ fn decode_bson<R: Read + ?Sized>(reader: &mut R, tag: u8, utf8_lossy: bool) -> D
         Some(Binary) => {
             let len = read_i32(reader)?;
             if len < 0 || len > MAX_BSON_SIZE {
-                return Err(DecoderError::InvalidLength(len as usize, format!("Invalid binary length of {}", len)));
+                return Err(DecoderError::InvalidLength(
+                    len as usize,
+                    format!("Invalid binary length of {}", len),
+                ));
             }
             let subtype = BinarySubtype::from(reader.read_u8()?);
             let mut data = Vec::with_capacity(len as usize);
@@ -241,7 +247,8 @@ fn decode_bson<R: Read + ?Sized>(reader: &mut R, tag: u8, utf8_lossy: bool) -> D
 
 /// Decode a BSON `Value` into a `T` Deserializable.
 pub fn from_bson<'de, T>(bson: Bson) -> DecoderResult<T>
-    where T: Deserialize<'de>
+where
+    T: Deserialize<'de>,
 {
     let de = Decoder::new(bson);
     Deserialize::deserialize(de)
